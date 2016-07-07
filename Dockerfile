@@ -10,7 +10,13 @@ RUN set -ex \
   && apk add --no-cache --update \
         bird@testing=${BIRD_VER}
 
+RUN mkdir /srv/bird
+WORKDIR /srv/bird
+
 # standard BGP port
 EXPOSE 179
 
-CMD ["/usr/sbin/bird", "-d"]
+COPY docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+CMD ["/usr/sbin/bird", "-d", "-c", "/srv/bird/bird.conf", "-s", "/srv/bird/bird.ctl"]
